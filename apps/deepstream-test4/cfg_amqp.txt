@@ -21,4 +21,4 @@ hostname = localhost
 username = guest
 port = 5672
 exchange = amq.topic
-topic = topicname
+topic = ldkjModelData
