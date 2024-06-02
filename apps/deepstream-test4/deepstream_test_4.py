@@ -30,7 +30,8 @@ from common.is_aarch_64 import is_aarch64
 from common.bus_call import bus_call
 from common.utils import long_to_uint64
 import pyds
-
+# import os
+# os.environ['GST_DEBUG'] = '4'
 MAX_DISPLAY_LEN = 64
 MAX_TIME_STAMP_LEN = 32
 PGIE_CLASS_ID_VEHICLE = 0
@@ -46,7 +47,7 @@ proto_lib = None
 conn_str = "localhost;2181;testTopic"
 cfg_file = None
 topic = None
-no_display = False
+no_display = True
 
 PGIE_CONFIG_FILE = "dstest4_pgie_config.txt"
 MSCONV_CONFIG_FILE = "dstest4_msgconv_config.txt"
@@ -344,6 +345,12 @@ def main(args):
     source = Gst.ElementFactory.make("filesrc", "file-source")
     if not source:
         sys.stderr.write(" Unable to create Source \n")
+        
+    # # 对于 MP4 文件，使用 qtdemux 来分离视频流
+    # demuxer = Gst.ElementFactory.make("qtdemux", "demuxer")
+    # if not demuxer:
+    #     sys.stderr.write(" Unable to create demuxer \n")
+
 
     print("Creating H264Parser \n")
     h264parser = Gst.ElementFactory.make("h264parse", "h264-parser")
@@ -427,6 +434,7 @@ def main(args):
 
     print("Adding elements to Pipeline \n")
     pipeline.add(source)
+    # pipeline.add(demuxer)
     pipeline.add(h264parser)
     pipeline.add(decoder)
     pipeline.add(streammux)
@@ -439,6 +447,11 @@ def main(args):
     pipeline.add(msgconv)
     pipeline.add(msgbroker)
     pipeline.add(sink)
+    
+    # print("Linking elements in the Pipeline \n")
+    # source.link(demuxer)
+    # demuxer.link(h264parser)
+    # h264parser.link(decoder)
 
     print("Linking elements in the Pipeline \n")
     source.link(h264parser)
@@ -531,7 +544,7 @@ def parse_args():
     proto_lib = options.proto_lib
     conn_str = options.conn_str
     topic = options.topic
-    no_display = options.no_display
+    # no_display = options.no_display
 
     if not (proto_lib and input_file):
         print("Usage: python3 deepstream_test_4.py -i <H264 filename> -p "

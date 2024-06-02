@@ -178,17 +178,22 @@ def main(args):
     if not nvosd:
         sys.stderr.write(" Unable to create nvosd \n")
 
-    # Finally render the osd output
-    if is_aarch64():
-        print("Creating nv3dsink \n")
-        sink = Gst.ElementFactory.make("nv3dsink", "nv3d-sink")
-        if not sink:
-            sys.stderr.write(" Unable to create nv3dsink \n")
-    else:
-        print("Creating EGLSink \n")
-        sink = Gst.ElementFactory.make("nveglglessink", "nvvideo-renderer")
-        if not sink:
-            sys.stderr.write(" Unable to create egl sink \n")
+
+    print("Creating FakeSink \n")
+    sink = Gst.ElementFactory.make("fakesink", "fakesink")
+    if not sink:
+        sys.stderr.write(" Unable to create fakesink \n")
+    # # Finally render the osd output
+    # if is_aarch64():
+    #     print("Creating nv3dsink \n")
+    #     sink = Gst.ElementFactory.make("nv3dsink", "nv3d-sink")
+    #     if not sink:
+    #         sys.stderr.write(" Unable to create nv3dsink \n")
+    # else:
+    #     print("Creating EGLSink \n")
+    #     sink = Gst.ElementFactory.make("nveglglessink", "nvvideo-renderer")
+    #     if not sink:
+    #         sys.stderr.write(" Unable to create egl sink \n")
 
     print("Playing file %s " %args[1])
     source.set_property('location', args[1])
@@ -257,3 +262,5 @@ def main(args):
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
 
+# 2024年6月2日 测试成功
+# python3 deepstream_test_1.py /opt/nvidia/deepstream/deepstream/samples/streams/sample_720p.h264 
